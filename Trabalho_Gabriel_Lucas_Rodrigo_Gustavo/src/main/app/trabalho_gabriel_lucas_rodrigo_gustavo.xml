@@ -17,16 +17,16 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 	<http:request-config name="HTTP_Request_Configuration_Cartao"
 		host="localhost" port="9000" doc:name="HTTP Request Configuration" />
 	<http:request-config name="HTTP_Request_Configuration" host="127.0.0.1" port="8903" doc:name="HTTP Request Configuration"/>
-	<flow name="Portal-Web">
+	<flow name="AppIndex">
 		<http:listener config-ref="HTTP_Listener_Configuration"
 			path="*" doc:name="Tela inicial" />
 		<http:static-resource-handler
-			resourceBase="${app.home}/portalweb" doc:name="Portal" />
+			resourceBase="${app.home}/portalweb" doc:name="Formul&#225;rio" />
 	</flow>
 	<flow name="MainFlow">
 		<http:listener config-ref="HTTP_Listener_Configuration" path="/tratamento" doc:name="HTTP"/>
-		<component class="tratamento.Tratamento" doc:name="Java"/>
-		<enricher doc:name="Inclui CEP">
+		<component class="tratamento.Tratamento" doc:name="Transforma o HashMap do PAYLOAD em um objeto PEDIDO"/>
+		<enricher doc:name="Inclui Endere&#231;o">
 			<http:request config-ref="HTTP_Request_Configuration_CEP" path="/CEPService/getCepInfo/" method="GET" doc:name="Consulta CEP">
 				<http:request-builder>
 					<http:query-param paramName="cep" value="#[payload.cep]"/>
@@ -37,44 +37,44 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 			<enrich source="#[json:bairro]" target="#[payload.bairro]"/>
 			<enrich source="#[json:localidade]" target="#[payload.municipio]"/>
 		</enricher>
-		<component class="tratamento.dao.Dao" doc:name="Persist Pedido"/>
+		<component class="tratamento.dao.Dao" doc:name="Salva o PAYLOAD atual no Banco de Dados"/>
 
-		<choice doc:name="Qual cart&#227;o">
+		<choice doc:name="Fork cart&#227;o">
 			<when expression="#[Integer.parseInt(payload.numeroCartao.substring(0,2)) &gt;= 51  &amp;&amp; Integer.parseInt(payload.numeroCartao.substring(0,2)) &lt;= 55]">
-				<component class="tratamento.ProcessamentoMastercard" doc:name="Master"/>
+				<component class="tratamento.ProcessamentoMastercard" doc:name="Mastercard"/>
 			</when>
 			<when expression="#[payload.numeroCartao.substring(0,1) == '4']">
 				<component class="tratamento.ProcessamentoVisa" doc:name="Visa"/>
 			</when>
 			<otherwise>
-				<component class="tratamento.LancarExcecaoCartaoNaoReconhecido" doc:name="Cart&#227;o n&#227;o aceito ou n&#227;o reconhecido"/>
+				<component class="tratamento.LancarExcecaoCartaoNaoReconhecido" doc:name="Nunca vai chegar aqui devido a valida&#231;&#227;o no HTML, mas est&#225; por seguran&#231;a."/>
 			</otherwise>
 		</choice>
 		<enricher doc:name="Nota fiscal">
 			<processor-chain doc:name="Processor Chain">
-				<component class="tratamento.MontaXmlNotaFiscal" doc:name="Montar XML Java"/>
-				<set-payload value="#[payload]" mimeType="text/xml" doc:name="Seta nota fiscal"/>
-				<http:request config-ref="HTTP_Request_Configuration" path="/gerarNotaFiscal" method="POST" doc:name="Gerar nota fiscal"/>
+				<component class="tratamento.MontaXmlNotaFiscal" doc:name="Transforma o objeto Pedido em uma String com XML"/>
+				<set-payload value="#[payload]" mimeType="text/xml" doc:name="Transforma a String com XML em um XML de verdade"/>
+				<http:request config-ref="HTTP_Request_Configuration" path="/gerarNotaFiscal" method="POST" doc:name="Servi&#231;o do professor para gerar NF"/>
 			</processor-chain>
 			<enrich source="#[xpath('//numeroNotaFiscal')]" target="#[payload.notaFiscal]"/>
 			<enrich source="#[xpath('//urlNotaFiscal')]" target="#[payload.urlNotaFiscal]"/>
 		</enricher>
-		<set-property propertyName="destinatarioEmail" value="#[payload.email]" doc:name="Defini&#231;&#227;o destinat&#225;rio do e-mail cliente"/>
-		<async doc:name="Enviar e-mail para cliente">
+
+		<async doc:name="Enviar e-mail para cliente (Nota Fiscal)">
+			<set-property propertyName="destinatarioEmail" value="#[payload.email]" doc:name="Define o email do PAYLOAD como destinat&#225;rio"/>
 			<set-payload value="Seu pedido foi feito com sucesso!
 O n&#250;mero da nota fiscal &#233; #[payload.notaFiscal]
-A nota fiscal pode ser visualizada neste link: #[payload.urlNotaFiscal]" encoding="UTF-8" mimeType="text/plain" doc:name="Email do cliente"/>
-			<smtps:outbound-endpoint host="smtp.gmail.com" port="465" user="gabriel.epereira0807@gmail.com" password="hjnl ziit mkpx qrhe" to="#[message.outboundProperties.'destinatarioEmail']" from="gabriel.epereira0807@gmail.com" subject="Nota Fiscal" responseTimeout="10000" doc:name="SMTP Cliente"/>
+A nota fiscal pode ser visualizada neste link: #[payload.urlNotaFiscal]" encoding="UTF-8" mimeType="text/plain" doc:name="Conte&#250;do do email"/>
+			<smtps:outbound-endpoint host="smtp.gmail.com" port="465" user="gabriel.epereira0807@gmail.com" password="hjnl ziit mkpx qrhe" to="#[message.outboundProperties.'destinatarioEmail']" from="gabriel.epereira0807@gmail.com" subject="Nota Fiscal" responseTimeout="10000" doc:name="Envia email para cliente"/>
 		</async>
-		<set-property propertyName="destinatarioEmail" value="rhmoraes@furb.br" doc:name="Defini&#231;&#227;o do destinat&#225;rio do e-mail gerente"/>
-		<async doc:name="Enviar e-mail para Gerente">
-			<component class="tratamento.GerarRelatorio" doc:name="GerarRelat&#243;rio"/>
-			<set-attachment attachmentName="Relatorio_de_Vendas.xls" value="#[message.payload]" contentType="application/vnd.ms-excel" doc:name="Attachment"/>
-			<set-payload value="Ol&#225;, segue em anexo os pedidos efetuados hoje." encoding="ISO-8859-1" doc:name="Corpo email"/>
-			<smtps:outbound-endpoint host="smtp.gmail.com" port="465" user="gabriel.epereira0807@gmail.com" password="hjnl ziit mkpx qrhe" to="#[message.outboundProperties.'destinatarioEmail']" from="gabriel.epereira0807@gmail.com" subject="Relat&#243;rio de Pedidos da NewTec" responseTimeout="10000" doc:name="SMTP para Gerente"/>
+
+		<async doc:name="Enviar e-mail para Gerente (Relat&#243;rio)">
+			<set-property propertyName="destinatarioEmail" value="rhmoraes@furb.br" doc:name="Define o email do Rodrigo (gerente) como destinat&#225;rio"/>
+			<component class="tratamento.GerarRelatorio" doc:name="Gera relat&#243;rio em Excel"/>
+			<set-attachment attachmentName="Relatorio_de_Vendas.xls" value="#[message.payload]" contentType="application/vnd.ms-excel" doc:name="Anexa o Excel ao email"/>
+			<set-payload value="Ol&#225;, segue em anexo os pedidos efetuados hoje." encoding="ISO-8859-1" doc:name="Conte&#250;do do email"/>
+			<smtps:outbound-endpoint host="smtp.gmail.com" port="465" user="gabriel.epereira0807@gmail.com" password="hjnl ziit mkpx qrhe" to="#[message.outboundProperties.'destinatarioEmail']" from="gabriel.epereira0807@gmail.com" subject="Relat&#243;rio de Pedidos da NewTec" responseTimeout="10000" doc:name="Envia email para gerente"/>
 		</async>
-		<catch-exception-strategy doc:name="Catch Exception Strategy">
-			<set-payload value="#[exception.cause] " doc:name="Tratar erro"/>
-		</catch-exception-strategy>
+
 	</flow>
 </mule>
