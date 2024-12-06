@@ -10,10 +10,13 @@
       rel="stylesheet"
     />
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
-        font-family: 'Roboto', sans-serif;
+        font-family: "Roboto", sans-serif;
         background-color: #f5f5f5;
       }
       .header-title {
@@ -46,93 +49,187 @@
     <main class="container">
       <div class="card">
         <p class="flow-text">
-          Bem-vindo à <strong>NewTec</strong>, uma empresa de tecnologia robótica.<br />
+          Bem-vindo à <strong>NewTec</strong>, uma empresa de tecnologia
+          robótica.<br />
           Escolha um dos nossos produtos abaixo:
         </p>
         <ul class="collection">
           <li class="collection-item">
-            <strong>Robôs com gerador Ark:</strong> Funcionam por semanas a fio sem necessidade de recarga.
+            <strong>Robôs com gerador Ark:</strong> Funcionam por semanas a fio
+            sem necessidade de recarga.
           </li>
           <li class="collection-item">
-            <strong>Robôs com gerador solar:</strong> Operam à noite, mas precisam de recarga de 2 horas pela manhã.
+            <strong>Robôs com gerador solar:</strong> Operam à noite, mas
+            precisam de recarga de 2 horas pela manhã.
           </li>
         </ul>
       </div>
 
       <div class="card">
         <form id="paymentForm" action="tratamento" method="post">
-          <input type="hidden" type="number" name="frete" value="20" />
+          <input required type="hidden" type="number" name="frete" value="20" />
           <h5>Escolha os produtos:</h5>
           <div class="row">
             <div class="input-field col s12 m6">
-              <input id="qtd-ark" type="number" name="QRDRA" min="0" value="0" />
+              <input
+                id="qtd-ark"
+                type="number"
+                name="QRDRA"
+                min="0"
+                value="0"
+              />
               <label for="qtd-ark">Robô Doméstico com Gerador Ark</label>
             </div>
             <div class="input-field col s12 m6">
-              <input id="qtd-solar" type="number" name="QRDRS" min="0" value="0" />
+              <input
+                id="qtd-solar"
+                type="number"
+                name="QRDRS"
+                min="0"
+                value="0"
+              />
               <label for="qtd-solar">Robô Doméstico com Gerador Solar</label>
             </div>
+          </div>
+          <div id="cardError-qtd" class="error-message">
+            Para prosseguir, você precisa comprar ao menos um produto.
           </div>
 
           <h5>Informações do comprador:</h5>
           <div class="row">
             <div class="input-field col s12">
-              <input id="nome" type="text" name="nome" />
+              <input id="nome" type="text" name="nome" required />
               <label for="nome">Nome</label>
             </div>
             <div class="input-field col s12">
-              <input id="cpf" type="text" name="cpf" />
+              <input
+                required
+                id="cpf"
+                type="text"
+                name="cpf"
+                size="11"
+                maxlength="11"
+                minlength="11"
+              />
               <label for="cpf">CPF</label>
             </div>
             <div class="input-field col s12">
-              <input id="municipio" type="text" name="municipio" />
+              <input required id="municipio" type="text" name="municipio" />
               <label for="municipio">Município</label>
             </div>
             <div class="input-field col s12 m6">
-              <input id="estado" type="text" name="estado" value="SC" />
+              <input
+                required
+                id="estado"
+                type="text"
+                name="estado"
+                value="SC"
+                maxlength="2"
+                minlength="2"
+                size="2"
+              />
               <label for="estado">Estado</label>
             </div>
             <div class="input-field col s12">
-              <input id="email" type="email" name="email" />
+              <input required id="email" type="email" name="email" />
               <label for="email">E-mail</label>
             </div>
             <div class="input-field col s12">
-              <input id="numeroCartao" type="text" name="numeroCartao" maxlength="16" />
+              <input
+                required
+                id="numeroCartao"
+                type="text"
+                name="numeroCartao"
+                minlength="16"
+                maxlength="16"
+                size="16"
+              />
               <label for="numeroCartao">Número do Cartão</label>
-              <div id="cardError" class="error-message">O cartão deve ser Visa ou Mastercard</div>
+              <div id="cardError" class="error-message">
+                O cartão deve ser Visa ou Mastercard
+              </div>
             </div>
             <div class="input-field col s12 m6">
-              <input id="cep" type="text" name="cep" maxlength="9" />
+              <input
+                required
+                id="cep"
+                type="text"
+                name="cep"
+                maxlength="8"
+                minlength="8"
+                size="8"
+              />
               <label for="cep">CEP</label>
             </div>
             <div class="input-field col s12 m6">
-              <input id="telefone" type="text" name="telefone" />
+              <input
+                minlength="8"
+                maxlength="13"
+                size="13"
+                required
+                id="telefone"
+                type="tel"
+                name="telefone"
+              />
               <label for="telefone">Telefone</label>
             </div>
           </div>
 
           <div class="row">
-            <button type="submit" class="btn waves-effect waves-light blue">Realizar Pedido</button>
-            <button type="reset" class="btn waves-effect waves-light red">Cancelar</button>
+            <button type="submit" class="btn waves-effect waves-light blue">
+              Realizar Pedido
+            </button>
+            <button type="reset" class="btn waves-effect waves-light red">
+              Cancelar
+            </button>
           </div>
         </form>
       </div>
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
-      document.getElementById("paymentForm").addEventListener("submit", function (e) {
-        const numeroCartao = document.getElementById("numeroCartao").value.trim();
+      const form = document.querySelector("form#paymentForm");
+      const cardErrorQtd = document.querySelector("#cardError-qtd");
+
+      form.addEventListener("submit", function (e) {
+        const qtdArk = +document.querySelector("input#qtd-ark").value;
+        const qtdSolar = +document.querySelector("input#qtd-solar").value;
+
+        console.log(qtdArk, qtdSolar);
+
+        if (qtdArk + qtdSolar === 0) {
+          e.preventDefault();
+          cardErrorQtd.style.display = "block";
+          return;
+        } else {
+          cardErrorQtd.style.display = "none";
+        }
+
+        const numeroCartao = document
+          .getElementById("numeroCartao")
+          .value.trim();
         const cardError = document.getElementById("cardError");
         const isVisa = numeroCartao.startsWith("4");
         const isMastercard =
-          numeroCartao.startsWith("51") || numeroCartao.startsWith("52") || numeroCartao.startsWith("53") || numeroCartao.startsWith("54") || numeroCartao.startsWith("55"); 
+          numeroCartao.startsWith("51") ||
+          numeroCartao.startsWith("52") ||
+          numeroCartao.startsWith("53") ||
+          numeroCartao.startsWith("54") ||
+          numeroCartao.startsWith("55");
 
         if (!isVisa && !isMastercard) {
           e.preventDefault();
           cardError.style.display = "block";
+          return;
         } else {
-          cardError.style.display = "none"; 
+          cardError.style.display = "none";
         }
+
+        const email = document.querySelector("input#email").value;
+        alert(
+          `Pedido realizado com sucesso! Nota fiscal enviada para ${email}.`
+        );
+        setTimeout(() => form.reset(), 1000);
       });
     </script>
   </body>

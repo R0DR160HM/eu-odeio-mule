@@ -38,7 +38,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 			<enrich source="#[json:localidade]" target="#[payload.municipio]"/>
 		</enricher>
 		<component class="tratamento.dao.Dao" doc:name="Persist Pedido"/>
-		<logger message="Payload dps da consulta: #[payload]" level="INFO" doc:name="Logger"/>
+
 		<choice doc:name="Qual cart&#227;o">
 			<when expression="#[Integer.parseInt(payload.numeroCartao.substring(0,2)) &gt;= 51  &amp;&amp; Integer.parseInt(payload.numeroCartao.substring(0,2)) &lt;= 55]">
 				<component class="tratamento.ProcessamentoMastercard" doc:name="Master"/>

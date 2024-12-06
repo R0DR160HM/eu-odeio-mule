@@ -33,7 +33,8 @@ public class GerarRelatorio {
 
 			// Cabecalho
 
-			String[] nomesColunasCabecalho = new String[] { "C�digo", "Cliente", "Endere�o", "Estado", "Robôs com gerador Ark", "Robôs com gerador Solar", "Total robôs" };
+			String[] nomesColunasCabecalho = new String[] { "Código", "Cliente", "Endereço", "Estado",
+					"Robôs com gerador Ark", "Robôs com gerador Solar", "Total robôs" };
 
 			HSSFRow cabecalho = sheet.createRow((short) 0);
 
@@ -52,47 +53,44 @@ public class GerarRelatorio {
 			// O indice come�a em 0, 1 indica a segunda linha (a primeira ap�s o cabe�alho)
 			int i = 1;
 
+			HSSFRow linha = sheet.createRow((short) i++);
 
-				HSSFRow linha = sheet.createRow((short) i++);
+			j = 0;
 
-				j = 0;
+			// Codigo
+			HSSFCell coluna1 = linha.createCell(j++);
+			coluna1.setCellValue(new HSSFRichTextString(String.valueOf(p.getCodigo())));
+			coluna1.setCellStyle(styleCell);
 
-				// Codigo
-				HSSFCell coluna1 = linha.createCell(j++);
-				coluna1.setCellValue(new HSSFRichTextString(String.valueOf(p.getCodigo())));
-				coluna1.setCellStyle(styleCell);
+			// Cliente
+			HSSFCell coluna2 = linha.createCell(j++);
+			coluna2.setCellValue(new HSSFRichTextString(p.getCliente()));
+			coluna2.setCellStyle(styleCell);
 
-				// Cliente
-				HSSFCell coluna2 = linha.createCell(j++);
-				coluna2.setCellValue(new HSSFRichTextString(p.getCliente()));
-				coluna2.setCellStyle(styleCell);
+			// Endereco
+			HSSFCell coluna3 = linha.createCell(j++);
+			coluna3.setCellValue(new HSSFRichTextString(p.getEndereco()));
+			coluna3.setCellStyle(styleCell);
 
-				// Endereco
-				HSSFCell coluna3 = linha.createCell(j++);
-				coluna3.setCellValue(new HSSFRichTextString(p.getEndereco()));
-				coluna3.setCellStyle(styleCell);
+			// Estado
+			HSSFCell coluna4 = linha.createCell(j++);
+			coluna4.setCellValue(new HSSFRichTextString(p.getEstado()));
+			coluna4.setCellStyle(styleCell);
 
-				// Estado
-				HSSFCell coluna4 = linha.createCell(j++);
-				coluna4.setCellValue(new HSSFRichTextString(p.getEstado()));
-				coluna4.setCellStyle(styleCell);
+			// Itens do Reator
+			HSSFCell coluna5 = linha.createCell(j++);
+			coluna5.setCellValue(new HSSFRichTextString(String.valueOf(p.getQtdReatorArk())));
+			coluna5.setCellStyle(styleCell);
 
-				// Itens do Reator
-				HSSFCell coluna5 = linha.createCell(j++);
-				coluna5.setCellValue(new HSSFRichTextString(String.valueOf(p.getQtdReatorArk())));
-				coluna5.setCellStyle(styleCell);
+			// Itens do Robo
+			HSSFCell coluna6 = linha.createCell(j++);
+			coluna6.setCellValue(new HSSFRichTextString(String.valueOf(p.getQtdReatorSolar())));
+			coluna6.setCellStyle(styleCell);
 
-				// Itens do Robo
-				HSSFCell coluna6 = linha.createCell(j++);
-				coluna6.setCellValue(new HSSFRichTextString(String.valueOf(p.getQtdReatorSolar())));
-				coluna6.setCellStyle(styleCell);
-				
-				// Itens do Robo
-				HSSFCell coluna7 = linha.createCell(j++);
-				coluna7.setCellValue(new HSSFRichTextString(String.valueOf(p.getQtdRoboDomestico())));
-				coluna7.setCellStyle(styleCell);
-
-			
+			// Itens do Robo
+			HSSFCell coluna7 = linha.createCell(j++);
+			coluna7.setCellValue(new HSSFRichTextString(String.valueOf(p.getQtdRoboDomestico())));
+			coluna7.setCellStyle(styleCell);
 
 			for (j = 0; j < nomesColunasCabecalho.length; j++)
 				sheet.autoSizeColumn((short) j);
