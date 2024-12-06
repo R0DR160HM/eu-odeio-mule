@@ -41,7 +41,6 @@ public class Dao {
 					"INSERT INTO pedidos (CLIENTE, ENDERECO, ESTADO, ITENS, TOTAL) VALUES (?, ?, ?, ?, ?)", //
 					Statement.RETURN_GENERATED_KEYS);
 
-			// stmt.setInt(1, pedido.getCodigo());
 			stmt.setString(1, pedido.getCliente());
 			stmt.setString(2, pedido.getEndereco());
 			stmt.setString(3, pedido.getEstado());

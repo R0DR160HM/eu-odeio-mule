@@ -78,13 +78,14 @@ public class Tratamento {
 
 		// preencher beans com os itens
 
-		pedido.setQtdRoboDomestico(qRoboDomestico);
+		// pedido.setQtdRoboDomestico(qRoboDomestico);
 		pedido.setQtdReatorArk(qReatorArk);
 		pedido.setQtdReatorSolar(qReatorSolar);
 		pedido.setqtdTotal(qRoboDomestico + qReatorArk + qReatorSolar);
 
-		pedido.setTotal(100 + new Random().nextInt(1000)); // valor aleatorio s�
-		// para constar...
+		int valor = (qReatorArk * 100) + (qReatorSolar * 120);
+
+		pedido.setTotal(valor);
 
 		return pedido;
 	}

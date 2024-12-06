@@ -54,6 +54,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 			<processor-chain doc:name="Processor Chain">
 				<component class="tratamento.MontaXmlNotaFiscal" doc:name="Transforma o objeto Pedido em uma String com XML"/>
 				<set-payload value="#[payload]" mimeType="text/xml" doc:name="Transforma a String com XML em um XML de verdade"/>
+				<logger message="Nueta fiscalita: #[payload]" level="INFO" doc:name="Logger"/>
 				<http:request config-ref="HTTP_Request_Configuration" path="/gerarNotaFiscal" method="POST" doc:name="Servi&#231;o do professor para gerar NF"/>
 			</processor-chain>
 			<enrich source="#[xpath('//numeroNotaFiscal')]" target="#[payload.notaFiscal]"/>

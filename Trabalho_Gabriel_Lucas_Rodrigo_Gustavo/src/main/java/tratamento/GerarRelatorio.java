@@ -50,7 +50,7 @@ public class GerarRelatorio {
 			}
 
 			// Linhas
-			// O indice come�a em 0, 1 indica a segunda linha (a primeira ap�s o cabe�alho)
+			// O indice começa em 0, 1 indica a segunda linha (a primeira após o cabeçalho)
 			int i = 1;
 
 			HSSFRow linha = sheet.createRow((short) i++);
